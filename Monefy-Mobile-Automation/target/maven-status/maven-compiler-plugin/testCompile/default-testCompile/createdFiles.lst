@@ -1,0 +1,4 @@
+tests/AddExpenseAndIncomeEntryTest.class
+tests/NegativeTest.class
+tests/ChangeCategoryTest.class
+tests/ChangeAmountTest.class
