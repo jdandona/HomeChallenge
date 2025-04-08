@@ -9,20 +9,26 @@ import io.restassured.response.Response;
 
 public class UserActions {
 
-    public static Response createUser(CreateUserRequest createUser) {
-        return RestAssuredActions.post(createUser, UrlConstants.user);
+    private RestAssuredActions restAssuredActions;
+
+    public UserActions(RestAssuredActions restAssuredActions) {
+        this.restAssuredActions = restAssuredActions;
     }
 
-    public static Response getUserByUsername(String username){
-        return RestAssuredActions.get(UrlConstants.user+"/"+username);
+    public  Response createUser(CreateUserRequest createUser) {
+        return restAssuredActions.post(createUser, UrlConstants.user);
+    }
+
+    public  Response getUserByUsername(String username){
+        return restAssuredActions.get(UrlConstants.user+"/"+username);
     }
     
-    public static Response deleteUserByUsername(String username) {
-        return RestAssuredActions.deleteWithoutResponseHasJson(UrlConstants.user + "/" + username);
+    public  Response deleteUserByUsername(String username) {
+        return restAssuredActions.deleteWithoutResponseHasJson(UrlConstants.user + "/" + username);
     }
     
-    public static Response updateUserByUsername(UpdateUserRequest updateUserResquest,String userName){
-        return RestAssuredActions.put(updateUserResquest, UrlConstants.user+"/"+userName);
+    public  Response updateUserByUsername(UpdateUserRequest updateUserResquest,String userName){
+        return restAssuredActions.put(updateUserResquest, UrlConstants.user+"/"+userName);
     }
     
 }

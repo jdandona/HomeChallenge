@@ -5,45 +5,51 @@ import com.aventstack.extentreports.markuputils.Markup;
 
 public class ReportLogger {
 
-    public static void logInfo(String message) {
-        ReportManager.getCurrentTest().info(message);
+    private final ReportManager reportmanager;
+
+    public ReportLogger(ReportManager reportmanager) {
+        this.reportmanager = reportmanager;
     }
 
-    public static void logPass(String message) {
-        ReportManager.getCurrentTest().pass(message);
+    public  void logInfo(String message) {
+        reportmanager.getCurrentTest().info(message);
     }
 
-    public static void logPass(Markup message) {
-        ReportManager.getCurrentTest().pass(message);
+    public  void logPass(String message) {
+        reportmanager.getCurrentTest().pass(message);
     }
 
-    public static void logFail(String message) {
-        ReportManager.getCurrentTest().fail(message);
-    }
-    public static void logFail(Markup message) {
-        ReportManager.getCurrentTest().fail(message);
+    public  void logPass(Markup message) {
+        reportmanager.getCurrentTest().pass(message);
     }
 
-    public static void logWarning(String message) {
-        ReportManager.getCurrentTest().warning(message);
+    public  void logFail(String message) {
+        reportmanager.getCurrentTest().fail(message);
+    }
+    public  void logFail(Markup message) {
+        reportmanager.getCurrentTest().fail(message);
     }
 
-    public static void highlight(String message, ExtentColor color) {
-        ReportManager.getCurrentTest().info(
+    public  void logWarning(String message) {
+        reportmanager.getCurrentTest().warning(message);
+    }
+
+    public  void highlight(String message, ExtentColor color) {
+        reportmanager.getCurrentTest().info(
             MarkupHelper.createLabel(message, color)
         );
     }
 
-    public static void logRequestAndResponse(String request, String response) {
-        ReportManager.getCurrentTest().info("📤 Request:\n" + request);
-        ReportManager.getCurrentTest().info("📥 Response:\n" + response);
+    public  void logRequestAndResponse(String request, String response) {
+        reportmanager.getCurrentTest().info("📤 Request:\n" + request);
+        reportmanager.getCurrentTest().info("📥 Response:\n" + response);
     }
 
-    public static void info(String message) {
-        ReportManager.getCurrentTest().info(message);
+    public  void info(String message) {
+        reportmanager.getCurrentTest().info(message);
     }
 
-    public static void skip(Markup message) {
-        ReportManager.getCurrentTest().skip(message);
+    public  void skip(Markup message) {
+        reportmanager.getCurrentTest().skip(message);
     }
 }

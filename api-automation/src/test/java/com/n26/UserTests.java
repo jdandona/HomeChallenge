@@ -1,9 +1,8 @@
 package com.n26;
 
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
-
-import com.n26.ApiActions.UserActions;
-import com.n26.ApiActionsManager.RestAssuredActions;
+import com.n26.TestInitiator.BaseTest;
 import com.n26.enums.HeaderTypes;
 import com.n26.enums.HttpStatusCode;
 import com.n26.requestModel.UserApiModel.CreateUserRequest;
@@ -13,6 +12,7 @@ import com.n26.responseModel.UpdateUserResponse;
 
 import io.restassured.response.Response;
 
+@Listeners(com.n26.CustomListener.TestngListener.class)
 public class UserTests extends BaseTest {
 
     int userId = 10;
@@ -40,20 +40,20 @@ public class UserTests extends BaseTest {
         createUserRequest.setPhone(phone);
         createUserRequest.setUserStatus(userStatus);
 
-        Response response = UserActions.createUser(createUserRequest);
-        RestAssuredActions.validateContentType(response.contentType(), HeaderTypes.APPLICATION_JSON);
-        RestAssuredActions.validateStatusCode(response.statusCode(), HttpStatusCode.STATUS200);
+        Response response = testContext().getUserActions().createUser(createUserRequest);
+        testContext().getRestAssuredActions().validateContentType(response.contentType(), HeaderTypes.APPLICATION_JSON);
+        testContext().getRestAssuredActions().validateStatusCode(response.statusCode(), HttpStatusCode.STATUS200);
     }
     
     @Test(priority = 1)
     public void getUserDetail_ByValidUsername() {
-        Response response = UserActions.getUserByUsername(username);
-        RestAssuredActions.validateContentType(response.contentType(), HeaderTypes.APPLICATION_JSON);
-        RestAssuredActions.validateStatusCode(response.statusCode(), HttpStatusCode.STATUS200);
+        Response response = testContext().getUserActions().getUserByUsername(username);
+        testContext().getRestAssuredActions().validateContentType(response.contentType(), HeaderTypes.APPLICATION_JSON);
+        testContext().getRestAssuredActions().validateStatusCode(response.statusCode(), HttpStatusCode.STATUS200);
 
         GetUserResponse responseData = response.as(GetUserResponse.class);
-        RestAssuredActions.validateResponse("Id", responseData.getId(), userId);
-        RestAssuredActions.validateResponse("Username", responseData.getUsername(), username);
+        testContext().getRestAssuredActions().validateResponse("Id", responseData.getId(), userId);
+        testContext().getRestAssuredActions().validateResponse("Username", responseData.getUsername(), username);
     }
 
     @Test(priority = 2)
@@ -68,14 +68,26 @@ public class UserTests extends BaseTest {
         updateUserResquest.setPhone(phone);
         updateUserResquest.setUserStatus(userStatus);
 
-        Response response = UserActions.updateUserByUsername(updateUserResquest,username);
-        RestAssuredActions.validateContentType(response.contentType(), HeaderTypes.APPLICATION_JSON);
-        RestAssuredActions.validateStatusCode(response.statusCode(), HttpStatusCode.STATUS200);
+        Response response = testContext().getUserActions().updateUserByUsername(updateUserResquest, username);
+        testContext().getRestAssuredActions().validateContentType(response.contentType(), HeaderTypes.APPLICATION_JSON);
+        testContext().getRestAssuredActions().validateStatusCode(response.statusCode(), HttpStatusCode.STATUS200);
 
         UpdateUserResponse responseData = response.as(UpdateUserResponse.class);
 
-        RestAssuredActions.validateResponse("Id",responseData.getId(), userId);
-        RestAssuredActions.validateResponse("Username",responseData.getUsername(), userUpdatedName);
+        testContext().getRestAssuredActions().validateResponse("Id", responseData.getId(), userId);
+        testContext().getRestAssuredActions().validateResponse("Username", responseData.getUsername(), userUpdatedName);
+    }
+    
+
+    @Test(priority = 3)
+    public void deleteUser_withValidData_shouldBeDeletedSuccessfully() {
+        Response response = testContext().getUserActions().deleteUserByUsername(userUpdatedName);
+        testContext().getRestAssuredActions().validateStatusCode(response.statusCode(), HttpStatusCode.STATUS200);
+
+        Response getResponse = testContext().getUserActions().getUserByUsername(userUpdatedName);
+        testContext().getRestAssuredActions().validateContentType(getResponse.contentType(), HeaderTypes.APPLICATION_XML);
+        testContext().getRestAssuredActions().validateStatusCode(getResponse.statusCode(), HttpStatusCode.STATUS404);
+        testContext().getRestAssuredActions().validateResponse("Get Response Output ", getResponse.asString(), userNotFoundText);
     }
 
     

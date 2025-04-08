@@ -37,7 +37,6 @@ public class RequestSpecificationManager {
 
     public static ResponseSpecification getResponseSpec(){
         return new ResponseSpecBuilder()
-                .expectContentType("application/json")
                 .log(LogDetail.ALL)
                 .build();
     }

@@ -9,38 +9,42 @@ public class ReportManager {
 
     private static final ThreadLocal<ExtentTest> currentTest = new ThreadLocal<>();
     private static final String EXTENTREPORTFOLDERPATH = System.getProperty("user.dir") + "/ExtentReport/";
-    private static ExtentReports extent;
+    private static ExtentReports extent = null;
 
-    public static void initReports() {
-        extent = new ExtentReports();
-        ExtentSparkReporter spark = null;
-        try {
-            spark = new ExtentSparkReporter(EXTENTREPORTFOLDERPATH);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void initReports() {
+        if (extent == null) {
+
+            try {
+                extent = new ExtentReports();
+                ExtentSparkReporter spark = new ExtentSparkReporter(EXTENTREPORTFOLDERPATH);
+                extent.attachReporter(spark);
+                spark.config().setTheme(Theme.DARK);
+                spark.config().setDocumentTitle("API Automation Report");
+                spark.config().setReportName("Test Report");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        extent.attachReporter(spark);
-        spark.config().setTheme(Theme.DARK);
-        spark.config().setDocumentTitle("API Automation Report");
-        spark.config().setReportName("Test Report");
+        
     }
 
-    public static void flushReports() {
+    public  void flushReports() {
         try {
             extent.flush();
+            currentTest.remove();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-public static ExtentTest createTest(String testName) {
-    ExtentTest test = extent.createTest(testName);
-    currentTest.set(test);
-    return test;
-}
+    public  ExtentTest createTest(String testName) {
+        ExtentTest test = extent.createTest(testName);
+        currentTest.set(test);
+        return test;
+    }
 
-public static ExtentTest getCurrentTest() {
-    return currentTest.get();
-}
+    public  ExtentTest getCurrentTest() {
+        return currentTest.get();
+    }
     
 }
